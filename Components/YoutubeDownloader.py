@@ -55,6 +55,3 @@ def download_youtube_video(url):
         print("pip install --upgrade pytube ffmpeg-python")
         print("Also, ensure that ffmpeg is installed on your system and available in your PATH.")
 
-if __name__ == "__main__":
-    youtube_url = input("Enter YouTube video URL: ")
-    download_youtube_video(youtube_url)

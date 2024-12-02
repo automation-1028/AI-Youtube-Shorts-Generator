@@ -17,7 +17,6 @@ def process_video():
             return jsonify({'error': 'URL is required'}), 400
 
         title, Vid = download_youtube_video(url)
-        print(title, Vid)
         if not Vid:
             return jsonify({'error': 'Unable to download the video'}), 400
 
@@ -45,7 +44,7 @@ def process_video():
 
         crop_video(Vid, temp_output, start, stop)
         crop_to_vertical(temp_output, cropped)
-        combine_videos(temp_output, cropped, output                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  _path)
+        combine_videos(temp_output, cropped, output_path)
 
         print(title, output_path)
         return jsonify({

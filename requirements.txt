@@ -3,8 +3,8 @@ ffmpeg==1.4
 ffmpeg_python==0.2.0
 moviepy==1.0.3
 numpy==1.26.0
-opencv_python==4.7.0.72
-opencv_python_headless==4.9.0.80
+opencv_python==4.9.0.80
+opencv_python_headless==4.8.1.78
 python-dotenv==1.0.1
 pytubefix
 torch
@@ -13,3 +13,5 @@ pydub
 openai==1.55.3
 --extra-index-url https://download.pytorch.org/whl/cu121
 flask
+
+
