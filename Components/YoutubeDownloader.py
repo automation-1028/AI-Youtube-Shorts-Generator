@@ -19,8 +19,7 @@ def download_youtube_video(url):
             stream_type = "Progressive" if stream.is_progressive else "Adaptive"
             print(f"{i}. Resolution: {stream.resolution}, Size: {size:.2f} MB, Type: {stream_type}")
 
-        choice = int(input("Enter the number of the video stream to download: "))
-        selected_stream = video_streams[choice]
+        selected_stream = video_streams[0]
 
         if not os.path.exists('videos'):
             os.makedirs('videos')
@@ -34,7 +33,7 @@ def download_youtube_video(url):
 
             print("Merging video and audio...")
             output_file = os.path.join('videos', f"{yt.title}.mp4")
-            stream = ffmpeg.input(video_file)
+            stream = ffmpeg.input(video_file).filter('crop', 'in_w-2*9', 'in_h-2*16')
             audio = ffmpeg.input(audio_file)
             stream = ffmpeg.output(stream, audio, output_file, vcodec='libx264', acodec='aac', strict='experimental')
             ffmpeg.run(stream, overwrite_output=True)
@@ -47,7 +46,7 @@ def download_youtube_video(url):
         
         print(f"Downloaded: {yt.title} to 'videos' folder")
         print(f"File path: {output_file}")
-        return output_file
+        return yt.title, output_file
 
     except Exception as e:
         print(f"An error occurred: {str(e)}")
