@@ -1,59 +1,41 @@
-from flask import Flask, request, jsonify
 from Components.YoutubeDownloader import download_youtube_video
 from Components.Edit import extractAudio, crop_video
 from Components.Transcription import transcribeAudio
 from Components.LanguageTasks import GetHighlight
 from Components.FaceCrop import crop_to_vertical, combine_videos
-import os
 
-app = Flask(__name__)
+url = input("Enter YouTube video URL: ")
+Vid= download_youtube_video(url)
+if Vid:
+    Vid = Vid.replace(".webm", ".mp4")
+    print(f"Downloaded video and audio files successfully! at {Vid}")
 
-@app.route('/process-video', methods=['POST'])
-def process_video():
-    try:
-        data = request.get_json()
-        url = data.get('url')
-        if not url:
-            return jsonify({'error': 'URL is required'}), 400
-
-        title, Vid = download_youtube_video(url)
-        if not Vid:
-            return jsonify({'error': 'Unable to download the video'}), 400
-
-        Vid = Vid.replace(".webm", ".mp4")
-        Audio = extractAudio(Vid)
-        
-        if not Audio:
-            return jsonify({'error': 'No audio file found'}), 400
+    Audio = extractAudio(Vid)
+    if Audio:
 
         transcriptions = transcribeAudio(Audio)
-        if not transcriptions:
-            return jsonify({'error': 'No transcriptions found'}), 400
+        if len(transcriptions) > 0:
+            TransText = ""
 
-        TransText = ""
-        for text, start, end in transcriptions:
-            TransText += (f"{start} - {end}: {text}")
+            for text, start, end in transcriptions:
+                TransText += (f"{start} - {end}: {text}")
 
-        start, stop = GetHighlight(TransText)
-        if start == 0 or stop == 0:
-            return jsonify({'error': 'Error in getting highlight'}), 400
+            start , stop = GetHighlight(TransText)
+            if start != 0 and stop != 0:
+                print(f"Start: {start} , End: {stop}")
 
-        output_path = f"output_{os.urandom(8).hex()}.mp4"
-        temp_output = "Out.mp4"
-        cropped = "cropped.mp4"
+                Output = "Out.mp4"
 
-        crop_video(Vid, temp_output, start, stop)
-        crop_to_vertical(temp_output, cropped)
-        combine_videos(temp_output, cropped, output_path)
+                crop_video(Vid, Output, start, stop)
+                croped = "croped.mp4"
 
-        print(title, output_path)
-        return jsonify({
-            'title': title,
-            'output_path': output_path
-        }), 200
-
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5001)
+                crop_to_vertical("Out.mp4", croped)
+                combine_videos("Out.mp4", croped, "Final.mp4")
+            else:
+                print("Error in getting highlight")
+        else:
+            print("No transcriptions found")
+    else:
+        print("No audio file found")
+else:
+    print("Unable to Download the video")
