@@ -19,7 +19,8 @@ def download_youtube_video(url):
             stream_type = "Progressive" if stream.is_progressive else "Adaptive"
             print(f"{i}. Resolution: {stream.resolution}, Size: {size:.2f} MB, Type: {stream_type}")
 
-        selected_stream = video_streams[0]
+        choice = 0
+        selected_stream = video_streams[choice]
 
         if not os.path.exists('videos'):
             os.makedirs('videos')
@@ -46,7 +47,7 @@ def download_youtube_video(url):
         
         print(f"Downloaded: {yt.title} to 'videos' folder")
         print(f"File path: {output_file}")
-        return yt.title, output_file
+        return output_file
 
     except Exception as e:
         print(f"An error occurred: {str(e)}")
